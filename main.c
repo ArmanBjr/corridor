@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <time.h>
 #include <math.h>
+#include <stdbool.h>
 
 struct board{
     int n, m;
@@ -83,7 +84,25 @@ void PrintTheMap(struct board GameMap) {
     }
 }
 
+bool validWallH(char c, int x, int y, struct board gameMap) {
+	if ((c == 'H' || c == 'h') && (gameMap.Map[x][y]/10)%10 != 2 && (gameMap.Map[x][y + 1]/10)%10 != 2) {
+		if ((gameMap.Map[x][y + 1]/100 == 2) && (gameMap.Map[x - 1][y + 1]/100 == 2)) {
+			if (!(gameMap.Map[x - 2][y + 1]/100 == 2 && gameMap.Map[x + 1][y + 1]/100 == 2)) return 0;
+		}
+		return 1;
+	}
+	return 0;
+}
 
+bool validWallV(char c, int x, int y, struct board gameMap) {
+	if ((c == 'V' || c == 'v') && gameMap.Map[x][y]/100 != 2 && gameMap.Map[x + 1][y]/100 != 2) {
+		if ((gameMap.Map[x + 1][y]/10) % 10 == 2 && (gameMap.Map[x + 1][y - 1]/100 == 2)) {
+			if (!((gameMap.Map[x + 1][y + 1]/10) % 10 == 2 && (gameMap.Map[x + 1][y - 2]/10) % 10 == 2)) return 0;
+		}
+		return 1;
+	}
+	return 0;
+}
 
 int main() {
     int n, m, i, j;
@@ -637,17 +656,17 @@ int main() {
                 char c;
                 while(1){
                     scanf("%d %d %c",&x,&y,&c);
-                    if (x >= gameMap.n || y >= gameMap.m) {
+                    if (x >= gameMap.n - 1 || y >= gameMap.m - 1) {
                         printf("Error! you have entered invalid location! try again: \n");
                         continue;
                     }
-                    else if(c=='H' || c=='h' && (gameMap.Map[x][y]/10)%10 != 2){
+                    else if(validWallH(c, x, y, gameMap)) {
                         gameMap.Map[x][y] += 10;
                         gameMap.Map[x][y + 1] += 10;
                         key++;
                         break;
                     }
-                    else if(c=='V' || c=='v' && gameMap.Map[x][y]/100 != 2){
+                    else if(validWallV(c, x, y, gameMap)){
                         gameMap.Map[x][y] += 100;
                         gameMap.Map[x + 1][y] += 100;
                         key++;
@@ -1186,13 +1205,13 @@ int main() {
                         printf("Error! you have entered invalid location! try again: \n");
                         continue;
                     }
-                    else if(c=='H' || c=='h' && (gameMap.Map[x][y]/10)%10 != 2){
+                    else if(validWallH(c, x, y, gameMap)){
                         gameMap.Map[x][y] += 10;
                         gameMap.Map[x][y + 1] += 10;
                         key++;
                         break;
                     }
-                    else if(c=='V' || c=='v' && gameMap.Map[x][y]/100 != 2){
+                    else if(validWallV(c, x, y, gameMap)){
                         gameMap.Map[x][y] += 100;
                         gameMap.Map[x + 1][y] += 100;
                         key++;
@@ -1212,4 +1231,3 @@ int main() {
 	} while(1);
     return 0;
 }
-
