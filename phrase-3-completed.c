@@ -171,6 +171,15 @@ void PrintTheMap(struct board GameMap) {
     int left, up, play;
     clearScreen();
     printf("This is the Map(O stands for player 1 and X stands for player 2): \n");
+    setTextColor(11, 0);
+    printf("    ");
+    for(int i=0;i<m;i++){
+        if(i/10 == 0)
+            printf("  %d ",i);
+        else
+            printf(" %d ",i);
+    }
+    printf("\n");
     setTextColor(1, 0);
     for (i = 0; i < n + 1; i++) {
         for (j = 0; j < m + 1; j++) {
@@ -178,10 +187,22 @@ void PrintTheMap(struct board GameMap) {
             left = GameMap.Map[i][j] / 100;
             up = (GameMap.Map[i][j] / 10) % 10;
             play = GameMap.Map[i][j] % 10;
-            if (up == 1) printf("....");
+            if (up == 1){
+                if(j==0){
+                    printf("    ....");
+                }
+                else{
+                    printf("....");
+                }
+            }
             else {
     			setTextColor(4, 0);
-				printf("====");
+				if(j==0){
+                    printf("    ====");
+                }
+                else{
+                    printf("====");
+                }
 				setTextColor(1, 0);
 			}
         }
@@ -192,10 +213,32 @@ void PrintTheMap(struct board GameMap) {
             left = GameMap.Map[i][j] / 100;
             up = (GameMap.Map[i][j] / 10) % 10;
             play = GameMap.Map[i][j] % 10;
-            if (left == 1) printf(":");
+            if (left == 1){
+                if(j==0){
+                    setTextColor(11,0);
+                    if(i/10 == 0)
+                        printf(" %d  ",i);
+                    else
+                        printf(" %d ",i);
+                    setTextColor(1,0);
+                }
+                printf(":");
+            }
             else {
-            	setTextColor(4, 0);
-				printf("|");
+				if(j==0){
+                    setTextColor(11, 0);
+                    if(i/10 == 0)
+                        printf(" %d  ",i);
+                    else
+                        printf(" %d ",i);
+                    setTextColor(4, 0);
+                    printf("|");
+				}
+                else
+                {
+                    setTextColor(4, 0);
+                    printf("|");
+                }
 				setTextColor(1, 0);
 			}
             if (!play) printf("   ");
@@ -1429,7 +1472,7 @@ int main() {
 	} while(1);
 	}
 	else if (s == 'c' || s == 'C') {
-		
+
 	srand(time(0));
 	do {
     	PrintTheMap(gameMap);
@@ -2488,7 +2531,7 @@ int main() {
                     srand(time(0));
                     z = rand() % 2;
                     if (z) c = 'h';
-					else c = 'v';                
+					else c = 'v';
                     if ((c == 'h') && (x >= gameMap.n || y >= gameMap.m - 1)) {
                         //printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
                         //continue;
@@ -2508,7 +2551,7 @@ int main() {
                     else if(validWallV(c, x, y, gameMap, &mygraph)){
                         gameMap.Map[x][y] += 100;
                         gameMap.Map[x + 1][y] += 100;
-                        key++; 
+                        key++;
                         break;
                     }
                     else{
