@@ -215,7 +215,29 @@ bool validWallH(char c, int x, int y, struct board gameMap , struct Graph *gr) {
         if ((gameMap.Map[x][y + 1]/100 == 2) && (gameMap.Map[x - 1][y + 1]/100 == 2)) {
             if (!(gameMap.Map[x - 2][y + 1]/100 == 2 && gameMap.Map[x + 1][y + 1]/100 == 2)) return 0;
         }
-        return 1;
+        delEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-gameMap.m-1),gr);
+        delEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-gameMap.m),gr);
+        makeUnVisit(gr);
+        flag1 = 0;
+        flag2 =0;
+        dfs( (gameMap.p1x*(gameMap.m+1)+gameMap.p1y),1,gameMap.n,gameMap.m,gr );
+        if(flag1==1){
+            makeUnVisit(gr);
+            dfs( (gameMap.p2x*(gameMap.m+1)+gameMap.p2y),2,gameMap.n,gameMap.m,gr );
+            if(flag2==1){
+                return 1;
+            }
+            else{
+                undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-gameMap.m-1),gr);
+                undoDeleteEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-gameMap.m),gr);
+                return 0;
+            }
+        }
+        else{
+            undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-gameMap.m-1),gr);
+            undoDeleteEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-gameMap.m),gr);
+            return 0;
+        }
     }
     return 0;
 }
@@ -225,7 +247,29 @@ bool validWallV(char c, int x, int y, struct board gameMap , struct Graph *gr) {
         if ((gameMap.Map[x + 1][y]/10) % 10 == 2 && (gameMap.Map[x + 1][y - 1]/100 == 2)) {
             if (!((gameMap.Map[x + 1][y + 1]/10) % 10 == 2 && (gameMap.Map[x + 1][y - 2]/10) % 10 == 2)) return 0;
         }
-        return 1;
+        delEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),gr);
+        delEdge((x*(gameMap.m+1)+y+gameMap.m+1),(x*(gameMap.m+1)+y+gameMap.m),gr);
+        makeUnVisit(gr);
+        flag1=0;
+        flag2=0;
+        dfs( (gameMap.p2x*(gameMap.m+1)+gameMap.p2y),2,gameMap.n,gameMap.m,gr );
+        if(flag2==1){
+            makeUnVisit(gr);
+            dfs( (gameMap.p1x*(gameMap.m+1)+gameMap.p1y),1,gameMap.n,gameMap.m,gr );
+            if(flag1==1){
+                return 1;
+            }
+            else{
+                undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),gr);
+                undoDeleteEdge((x*(gameMap.m+1)+y+gameMap.m+1),(x*(gameMap.m+1)+y+gameMap.m),gr);
+                return 0;
+            }
+        }
+        else{
+            undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),gr);
+            undoDeleteEdge((x*(gameMap.m+1)+y+gameMap.m+1),(x*(gameMap.m+1)+y+gameMap.m),gr);
+            return 0;
+        }
     }
     return 0;
 }
@@ -785,69 +829,21 @@ int main() {
                 char c;
                 while(1){
                     scanf("%d %d %c",&x,&y,&c);
-                    if (x >= gameMap.n - 1 || y >= gameMap.m - 1) {
+                    if (x > gameMap.n - 1 || y > gameMap.m - 1) {
                         printf("Error! you have entered invalid location! try again: \n");
                         continue;
                     }
                     else if(validWallH(c, x, y, gameMap, &mygraph)) {
-                        delEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                        delEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-m),&mygraph);
-                        makeUnVisit(&mygraph);
-                        flag1 = 0;
-                        flag2 =0;
-                        dfs( (gameMap.p1x*(m+1)+gameMap.p1y),1,gameMap.n,gameMap.m,&mygraph );
-                        if(flag1==1){
-                            makeUnVisit(&mygraph);
-                            dfs( (gameMap.p2x*(m+1)+gameMap.p2y),2,gameMap.n,gameMap.m,&mygraph );
-                            if(flag2==1){
-                                gameMap.Map[x][y] += 10;
-                                gameMap.Map[x][y + 1] += 10;
-                                key++;
-                            }
-                            else{
-                                printf("this wall block your opponent. try again:\n");
-                                undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                                undoDeleteEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-m),&mygraph);
-                                continue;
-                            }
-                        }
-                        else{
-                            printf("this wall block you. try again:\n");
-                            undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                            undoDeleteEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-m),&mygraph);
-                            continue;
-                        }
+                        gameMap.Map[x][y] += 10;
+                        gameMap.Map[x][y + 1] += 10;
+                        key++;
                         break;
                     }
                     else if(validWallV(c, x, y, gameMap, &mygraph)){
-                        delEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),&mygraph);
-                        delEdge((x*(gameMap.m+1)+y+m+1),(x*(gameMap.m+1)+y+m),&mygraph);
-                        makeUnVisit(&mygraph);
-                        flag1=0;
-                        flag2=0;
-                        dfs( (gameMap.p1x*(m+1)+gameMap.p1y),1,gameMap.n,gameMap.m,&mygraph );
-                        if(flag1==1){
-                            makeUnVisit(&mygraph);
-                            dfs( (gameMap.p2x*(m+1)+gameMap.p2y),2,gameMap.n,gameMap.m,&mygraph );
-                            if(flag2==1){
-                                gameMap.Map[x][y] += 100;
-                                gameMap.Map[x + 1][y] += 100;
-                                key++;
-                            }
-                            else{
-                                printf("this wall block your opponent. try again:\n");
-                                undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),&mygraph);
-                                undoDeleteEdge((x*(gameMap.m+1)+y+m+1),(x*(gameMap.m+1)+y+m),&mygraph);
-                                continue;
-                            }
-                        }
-                        else{
-                            printf("this wall block you. try again:\n");
-                            undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),&mygraph);
-                            undoDeleteEdge((x*(gameMap.m+1)+y+m+1),(x*(gameMap.m+1)+y+m),&mygraph);
-                            continue;
-                        }
-                        break;
+                            gameMap.Map[x][y] += 100;
+                            gameMap.Map[x + 1][y] += 100;
+                            key++;
+                            break;
                     }
                     else{
                         printf("Error! you have entered invalid character! try again: \n");
@@ -1378,69 +1374,21 @@ int main() {
                 char c;
                 while(1){
                     scanf("%d %d %c",&x,&y,&c);
-                    if (x >= gameMap.n || y >= gameMap.m) {
+                    if (x > gameMap.n - 1 || y > gameMap.m - 1) {
                         printf("Error! you have entered invalid location! try again: \n");
                         continue;
                     }
                     else if(validWallH(c, x, y, gameMap , &mygraph)){
-                        delEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                        delEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-m),&mygraph);
-                        makeUnVisit(&mygraph);
-                        flag1 = 0;
-                        flag2 = 0;
-                        dfs( (gameMap.p2x*(m+1)+gameMap.p2y),2,gameMap.n,gameMap.m,&mygraph );
-                        if(flag2==1){
-                            makeUnVisit(&mygraph);
-                            dfs((gameMap.p1x*(m+1)+gameMap.p1y),1,gameMap.n,gameMap.m,&mygraph);
-                            if(flag1==1){
-                                gameMap.Map[x][y] += 10;
-                                gameMap.Map[x][y + 1] += 10;
-                                key++;
-                            }
-                            else{
-                                printf("this wall block your opponent. try again:\n");
-                                undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                                undoDeleteEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-m),&mygraph);
-                                continue;
-                            }
-                        }
-                        else{
-                            printf("this wall block you. try again:\n");
-                            undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                            undoDeleteEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                            continue;
-                        }
+                        gameMap.Map[x][y] += 10;
+                        gameMap.Map[x][y + 1] += 10;
+                        key++;
                         break;
                     }
                     else if(validWallV(c, x, y, gameMap, &mygraph)){
-                        delEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),&mygraph);
-                        delEdge((x*(gameMap.m+1)+y+m+1),(x*(gameMap.m+1)+y+m),&mygraph);
-                        makeUnVisit(&mygraph);
-                        flag1=0;
-                        flag2=0;
-                        dfs( (gameMap.p2x*(m+1)+gameMap.p2y),2,gameMap.n,gameMap.m,&mygraph );
-                        if(flag2==1){
-                            makeUnVisit(&mygraph);
-                            dfs( (gameMap.p1x*(m+1)+gameMap.p1y),1,gameMap.n,gameMap.m,&mygraph );
-                            if(flag1==1){
-                                gameMap.Map[x][y] += 100;
-                                gameMap.Map[x + 1][y] += 100;
-                                key++;
-                            }
-                            else{
-                                printf("this wall block you. try again:\n");
-                                undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                                undoDeleteEdge((x*(gameMap.m+1)+y+1),(x*(gameMap.m+1)+y-m-1),&mygraph);
-                                continue;
-                            }
-                        }
-                        else{
-                            printf("this wall block your opponent. try again:\n");
-                            undoDeleteEdge((x*(gameMap.m+1)+y),(x*(gameMap.m+1)+y-1),&mygraph);
-                            undoDeleteEdge((x*(gameMap.m+1)+y+m+1),(x*(gameMap.m+1)+y+m),&mygraph);
-                            continue;
-                        }
-                        break;
+                            gameMap.Map[x][y] += 100;
+                            gameMap.Map[x + 1][y] += 100;
+                            key++;
+                            break;
                     }
                     else{
                         printf("Error! you have entered invalid character! try again: \n");
