@@ -124,13 +124,11 @@ int flag1=0,flag2=0;
 
 int dfs(int str, int who,int n,int m,struct Graph *g){
     g->visited[str] = 1;
-    //printf("m,n: %d , %d in %d \n",m,n,str);
     if(who == 2 && str<=m-1)
         flag2 = 1;
     if(who == 1 && str>=(n-1)*(m+1)){
         flag1 = 1;
     }
-    //printf("----------%d--------%d\n",str,flag1);
     int i;
     for(i=0;i<4;i++){
         if(g->adjList[str][i]!=-1){
@@ -171,6 +169,15 @@ void PrintTheMap(struct board GameMap) {
     int left, up, play;
     clearScreen();
     printf("This is the Map(O stands for player 1 and X stands for player 2): \n");
+    setTextColor(11, 0);
+    printf("    ");
+    for(int i=0;i<m;i++){
+        if(i/10 == 0)
+            printf("  %d ",i);
+        else
+            printf(" %d ",i);
+    }
+    printf("\n");
     setTextColor(1, 0);
     for (i = 0; i < n + 1; i++) {
         for (j = 0; j < m + 1; j++) {
@@ -178,10 +185,22 @@ void PrintTheMap(struct board GameMap) {
             left = GameMap.Map[i][j] / 100;
             up = (GameMap.Map[i][j] / 10) % 10;
             play = GameMap.Map[i][j] % 10;
-            if (up == 1) printf("....");
+            if (up == 1){
+                if(j==0){
+                    printf("    ....");
+                }
+                else{
+                    printf("....");
+                }
+            }
             else {
     			setTextColor(4, 0);
-				printf("====");
+				if(j==0){
+                    printf("    ====");
+                }
+                else{
+                    printf("====");
+                }
 				setTextColor(1, 0);
 			}
         }
@@ -192,10 +211,32 @@ void PrintTheMap(struct board GameMap) {
             left = GameMap.Map[i][j] / 100;
             up = (GameMap.Map[i][j] / 10) % 10;
             play = GameMap.Map[i][j] % 10;
-            if (left == 1) printf(":");
+            if (left == 1){
+                if(j==0){
+                    setTextColor(11,0);
+                    if(i/10 == 0)
+                        printf(" %d  ",i);
+                    else
+                        printf(" %d ",i);
+                    setTextColor(1,0);
+                }
+                printf(":");
+            }
             else {
-            	setTextColor(4, 0);
-				printf("|");
+				if(j==0){
+                    setTextColor(11, 0);
+                    if(i/10 == 0)
+                        printf(" %d  ",i);
+                    else
+                        printf(" %d ",i);
+                    setTextColor(4, 0);
+                    printf("|");
+				}
+                else
+                {
+                    setTextColor(4, 0);
+                    printf("|");
+                }
 				setTextColor(1, 0);
 			}
             if (!play) printf("   ");
@@ -280,8 +321,16 @@ bool validWallV(char c, int x, int y, struct board gameMap , struct Graph *gr) {
 
 int main() {
     int n, m, i, j;
-    printf("Please enter the size of the map: \n");
-    scanf("%d %d", &n, &m);
+    printf("Please enter the size of the map: (minimum size of map is 3*3)\n");
+    do{
+        scanf("%d %d", &n, &m);
+        if(n>=3 && m>=3){
+            break;
+        }
+        else{
+            printf("invalid size(minimum size of map is 3*3). try again:\n");
+        }
+    }while(1);
     struct board gameMap;
     struct Graph mygraph;
     gameMap.p1y = floor(n/2);
@@ -833,11 +882,7 @@ int main() {
                 char c;
                 while(1){
                     scanf("%d %d %c",&x,&y,&c);
-                    if ((c == 'h' || c == 'H' ) && (x >= gameMap.n || y >= gameMap.m - 1)) {
-                        printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
-                        continue;
-                    }
-                    else if ((c == 'v' || c == 'V') && (x >= gameMap.n - 1 || y >= gameMap.m)) {
+                    if ((x >= gameMap.n - 1 && (c=='v' || c=='V')) || (y >= gameMap.m - 1 && (c=='h' || c=='H'))) {
                         printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
                         continue;
                     }
@@ -1382,12 +1427,8 @@ int main() {
                 char c;
                 while(1){
                     scanf("%d %d %c",&x,&y,&c);
-                    if ((c == 'h' || c == 'H' ) && (x >= gameMap.n || y >= gameMap.m - 1)) {
-                        printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
-                        continue;
-                    }
-                    else if ((c == 'v' || c == 'V') && (x >= gameMap.n - 1 || y >= gameMap.m)) {
-                        printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
+                    if (x >= gameMap.n - 1 || y >= gameMap.m - 1) {
+                        printf("Error! you have entered invalid location (you can't place a wall there)! try again: \n");
                         continue;
                     }
                     else if(validWallH(c, x, y, gameMap , &mygraph)){
