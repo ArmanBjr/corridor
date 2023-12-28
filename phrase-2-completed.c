@@ -833,7 +833,11 @@ int main() {
                 char c;
                 while(1){
                     scanf("%d %d %c",&x,&y,&c);
-                    if (x >= gameMap.n - 1 || y >= gameMap.m - 1) {
+                    if ((c == 'h' || c == 'H' ) && (x >= gameMap.n || y >= gameMap.m - 1)) {
+                        printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
+                        continue;
+                    }
+                    else if ((c == 'v' || c == 'V') && (x >= gameMap.n - 1 || y >= gameMap.m)) {
                         printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
                         continue;
                     }
@@ -1378,8 +1382,12 @@ int main() {
                 char c;
                 while(1){
                     scanf("%d %d %c",&x,&y,&c);
-                    if (x >= gameMap.n - 1 || y >= gameMap.m - 1) {
-                        printf("Error! you have entered invalid location (you can't place a wall there)! try again: \n");
+                    if ((c == 'h' || c == 'H' ) && (x >= gameMap.n || y >= gameMap.m - 1)) {
+                        printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
+                        continue;
+                    }
+                    else if ((c == 'v' || c == 'V') && (x >= gameMap.n - 1 || y >= gameMap.m)) {
+                        printf("Error! you have entered invalid location(you can not place a wall there)! try again: \n");
                         continue;
                     }
                     else if(validWallH(c, x, y, gameMap , &mygraph)){
