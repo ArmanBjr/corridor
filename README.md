@@ -120,6 +120,7 @@ Phase snapshots are preserved in [`archive/`](archive/).
 
 MIT — see [LICENSE](LICENSE).
 
-## Author
+## Authors
 
-**Arman Bijari** — [GitHub](https://github.com/ArmanBjr)
+- **Arman Bijari** — [GitHub](https://github.com/ArmanBjr)
+- **Ali Houshyar** — [GitHub](https://github.com/AliHoushyar)
